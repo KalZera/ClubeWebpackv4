@@ -1,10 +1,11 @@
 import React from 'react'
 
 import Header from './../component/header'
+import Footer from './../component/footer'
 
 export default () => (
     <div>
-        <h1 className="blue white-text">Testando CSS e Funcionando</h1>
         <Header />
+        <Footer/>
     </div>
 )

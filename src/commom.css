@@ -1,3 +1,24 @@
 .imagem{
   height: 200px;
 }
+/* .busca{
+  vertical-align: middle;
+} */
+.busca{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.logo{
+  background-color: white;
+  max-height: 64px;
+}
+.btnPesquisa{
+  margin-right: auto;
+}
+.footer{
+  background-color: black;
+  bottom: 0px;
+  /* position: absolute; */
+}
