@@ -1,45 +1,66 @@
-const webpack = require('webpack');
-const webpackCli = require('webpack-cli');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+/* eslint-disable */
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path");
+const webpack = require("webpack");
+
+const isDevelopment = true;
+
 module.exports = {
-  entry: ["./root/index.jsx"],
+  mode: isDevelopment ? "development" : "production",
+  resolve: {
+    extensions: [".tsx", ".ts", ".js", ".jsx"],
+  },
+  entry: path.resolve(__dirname, "src", "./index"),
   module: {
     rules: [
       {
-        test: /\.js[x]$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
-      }, 
+          loader: "babel-loader",
+        },
+      },
       {
-        test: /\.html$/,
-        use: [
-          {
-            loader: "html-loader",
-            options: { minimize: true }
-          }
-        ]
-      }, 
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
       {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
-      }
-    ]
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ["@svgr/webpack"],
+      },
+    ],
   },
-  resolve:{
-    extensions:['.js','.jsx']
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
+    historyApiFallback: true,
+    hot: true,
+    port:
+      process.env.PORT ||
+      console.log(
+        "\x1b[31m%s\x1b[0m",
+        "Env PORT não encontrada, usando porta 3000"
+      ) ||
+      3000,
+  },
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].[hash].js",
+    publicPath: "/",
   },
   plugins: [
-    new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "public", "index.html"),
     }),
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    })
-  ]
+    isDevelopment &&
+      new ReactRefreshWebpackPlugin({
+        overlay: false,
+      }),
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(process.env),
+    }),
+  ].filter(Boolean),
 };
